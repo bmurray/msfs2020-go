@@ -32,6 +32,7 @@ var proc_SimConnect_MenuDeleteItem *syscall.LazyProc
 var proc_SimConnect_AddClientEventToNotificationGroup *syscall.LazyProc
 var proc_SimConnect_SetNotificationGroupPriority *syscall.LazyProc
 var proc_SimConnect_Text *syscall.LazyProc
+var proc_SimConnect_TransmitClientEvent *syscall.LazyProc
 
 type SimConnect struct {
 	handle      unsafe.Pointer
@@ -82,6 +83,7 @@ func New(name string) (*SimConnect, error) {
 		proc_SimConnect_AddClientEventToNotificationGroup = mod.NewProc("SimConnect_AddClientEventToNotificationGroup")
 		proc_SimConnect_SetNotificationGroupPriority = mod.NewProc("SimConnect_SetNotificationGroupPriority")
 		proc_SimConnect_Text = mod.NewProc("SimConnect_Text")
+		proc_SimConnect_TransmitClientEvent = mod.NewProc("SimConnect_TransmitClientEvent")
 	}
 
 	// SimConnect_Open(
@@ -415,6 +417,23 @@ func (s *SimConnect) MapClientEventToSimEvent(eventID DWORD, eventName string) e
 			"SimConnect_MapClientEventToSimEvent for eventID %d error: %d %s",
 			eventID, r1, err,
 		)
+	}
+
+	return nil
+}
+
+func (s *SimConnect) TransmitClientEvent(objectID, eventID, dwData, groupID, flags DWORD) error {
+
+	r1, _, err := proc_SimConnect_TransmitClientEvent.Call(
+		uintptr(s.handle),
+		uintptr(objectID),
+		uintptr(eventID),
+		uintptr(dwData),
+		uintptr(groupID),
+		uintptr(flags),
+	)
+	if int32(r1) < 0 {
+		return fmt.Errorf("SimConnect_TransmitClientEvent for eventID %d error: %d %s", eventID, r1, err)
 	}
 
 	return nil

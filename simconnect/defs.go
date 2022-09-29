@@ -142,6 +142,12 @@ const (
 	FACILITY_LIST_TYPE_VOR
 	FACILITY_LIST_TYPE_COUNT // invalid
 )
+const (
+	EVENT_FLAG_DEFAULT             DWORD = 0x00
+	EVENT_FLAG_FAST_REPEAT_TIMER         = 0x01
+	EVENT_FLAG_SLOW_REPEAT_TIMER         = 0x02
+	EVENT_FLAG_GROUPID_IS_PRIORITY       = 0x10
+)
 
 type Recv struct {
 	Size    DWORD
