@@ -6,7 +6,7 @@ also allows you to quickly teleport your plane to any location.
 
 ## install
 
-* download latest release zip [here](https://github.com/lian/msfs2020-go/releases)
+* download latest release zip [here](https://github.com/bmurray/msfs2020-go/releases)
 * unzip `vfrmap-win64.zip`
 
 ## run
@@ -38,7 +38,7 @@ earlier versions of this app used google maps directly, but this was too expensi
 
 ## compile
 
-`GOOS=windows GOARCH=amd64 go build github.com/lian/msfs2020-go/vfrmap` or see [build-vfrmap.sh](https://github.com/lian/msfs2020-go/blob/master/build-vfrmap.sh)
+`GOOS=windows GOARCH=amd64 go build github.com/bmurray/msfs2020-go/vfrmap` or see [build-vfrmap.sh](https://github.com/bmurray/msfs2020-go/blob/master/build-vfrmap.sh)
 
 ## Why does my virus-scanning software think this program is infected?
 

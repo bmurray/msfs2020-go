@@ -2,7 +2,7 @@ package main
 
 //go:generate go-bindata -pkg main -o bindata.go -modtime 1 -prefix html html
 
-// build: GOOS=windows GOARCH=amd64 go build -o vfrmap.exe github.com/lian/msfs2020-go/vfrmap
+// build: GOOS=windows GOARCH=amd64 go build -o vfrmap.exe github.com/bmurray/msfs2020-go/vfrmap
 
 import (
 	"encoding/json"
@@ -16,9 +16,9 @@ import (
 	"time"
 	"unsafe"
 
-	"github.com/lian/msfs2020-go/simconnect"
-	"github.com/lian/msfs2020-go/vfrmap/html/leafletjs"
-	"github.com/lian/msfs2020-go/vfrmap/websockets"
+	"github.com/bmurray/msfs2020-go/simconnect"
+	"github.com/bmurray/msfs2020-go/vfrmap/html/leafletjs"
+	"github.com/bmurray/msfs2020-go/vfrmap/websockets"
 )
 
 type Report struct {
@@ -102,7 +102,7 @@ func main() {
 	flag.BoolVar(&disableTeleport, "disable-teleport", false, "disable teleport")
 	flag.Parse()
 
-	fmt.Printf("\nmsfs2020-go/vfrmap\n  readme: https://github.com/lian/msfs2020-go/blob/master/vfrmap/README.md\n  issues: https://github.com/lian/msfs2020-go/issues\n  version: %s (%s)\n\n", buildVersion, buildTime)
+	fmt.Printf("\nmsfs2020-go/vfrmap\n  readme: https://github.com/bmurray/msfs2020-go/blob/master/vfrmap/README.md\n  issues: https://github.com/bmurray/msfs2020-go/issues\n  version: %s (%s)\n\n", buildVersion, buildTime)
 
 	exitSignal := make(chan os.Signal, 1)
 	signal.Notify(exitSignal, os.Interrupt, syscall.SIGTERM)

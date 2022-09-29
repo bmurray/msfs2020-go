@@ -10,7 +10,7 @@ cross-compiles from macos/linux, no other dependencies required. produces a sing
 
 ## releases and download
 
-program zips releases are uploaded [here](https://github.com/lian/msfs2020-go/releases)
+program zips releases are uploaded [here](https://github.com/bmurray/msfs2020-go/releases)
 
 ## tools
 
