@@ -6,14 +6,19 @@ package simconnect
 // MSFS-SDK/SimConnect\ SDK/lib/SimConnect.dll
 
 import (
+	_ "embed"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 	"path/filepath"
 	"reflect"
 	"syscall"
 	"unsafe"
 )
+
+//go:embed SimConnect.dll
+var simconnectDLL []byte
 
 var proc_SimConnect_Open *syscall.LazyProc
 var proc_SimConnect_Close *syscall.LazyProc
@@ -40,6 +45,38 @@ type SimConnect struct {
 	LastEventID DWORD
 }
 
+func getFilePath() (string, error) {
+	sysPath := "\\MSFS SDK\\SimConnect SDK\\lib\\SimConnect.dll"
+	st, err := os.Stat(sysPath)
+	if err == nil && !st.IsDir() {
+		return sysPath, nil
+	}
+	exePath, err := os.Executable()
+	if err != nil {
+		return "", err
+	}
+	dllPath := filepath.Join(filepath.Dir(exePath), "SimConnect.dll")
+	st, err = os.Stat(dllPath)
+	if err == nil && !st.IsDir() {
+		return dllPath, nil
+	}
+	path, err := os.Getwd()
+	if err != nil {
+		return "", fmt.Errorf("cannot get cwd: %w", err)
+	}
+	dllPath = filepath.Join(path, "SimConnect.dll")
+	st, err = os.Stat(dllPath)
+	if err == nil && !st.IsDir() {
+		return dllPath, nil
+	}
+	// b := bytes.NewReader(fsuipcDLL)
+	err = ioutil.WriteFile(dllPath, simconnectDLL, 0644)
+	if err != nil {
+		return "", fmt.Errorf("cannot write file: %w", err)
+	}
+	return dllPath, nil
+}
+
 func New(name string) (*SimConnect, error) {
 	s := &SimConnect{
 		DefineMap:   map[string]DWORD{"_last": 0},
@@ -47,19 +84,11 @@ func New(name string) (*SimConnect, error) {
 	}
 
 	if proc_SimConnect_Open == nil {
-		exePath, err := os.Executable()
+		dllPath, err := getFilePath()
 		if err != nil {
 			return nil, err
 		}
-
-		dllPath := filepath.Join(filepath.Dir(exePath), "SimConnect.dll")
-		if _, err = os.Stat(dllPath); os.IsNotExist(err) {
-			buf := MustAsset("MSFS-SDK/SimConnect SDK/lib/SimConnect.dll")
-
-			if err := ioutil.WriteFile(dllPath, buf, 0644); err != nil {
-				return nil, err
-			}
-		}
+		log.Println("Using SimConnect DLL path:", dllPath)
 
 		mod := syscall.NewLazyDLL(dllPath)
 		if err = mod.Load(); err != nil {
