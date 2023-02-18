@@ -147,7 +147,11 @@ func (s *SimConnect) GetEventID() DWORD {
 }
 
 func (s *SimConnect) GetDefineID(a interface{}) DWORD {
-	structName := reflect.TypeOf(a).Elem().Name()
+	t := reflect.TypeOf(a)
+	if t.Kind() == reflect.Ptr || t.Kind() == reflect.Interface {
+		t = t.Elem()
+	}
+	structName := t.Name()
 
 	id, ok := s.DefineMap[structName]
 	if !ok {
@@ -161,8 +165,11 @@ func (s *SimConnect) GetDefineID(a interface{}) DWORD {
 
 func (s *SimConnect) RegisterDataDefinition(a interface{}) error {
 	defineID := s.GetDefineID(a)
+	v := reflect.ValueOf(a)
+	if v.Kind() == reflect.Ptr || v.Kind() == reflect.Interface {
+		v = v.Elem()
+	}
 
-	v := reflect.ValueOf(a).Elem()
 	for j := 1; j < v.NumField(); j++ {
 		fieldName := v.Type().Field(j).Name
 		nameTag, _ := v.Type().Field(j).Tag.Lookup("name")
