@@ -45,18 +45,38 @@ type SimConnect struct {
 	LastEventID DWORD
 }
 
+var sysPaths = []string{
+	"c:\\MSFS SDK\\SimConnect SDK\\lib\\SimConnect.dll",
+	"c:\\MSFS 2024 SDK\\SimConnect SDK\\lib\\SimConnect.dll",
+}
+
+func findSysPath() (string, error) {
+	for _, sysPath := range sysPaths {
+		st, err := os.Stat(sysPath)
+		if err == nil && !st.IsDir() {
+			return sysPath, nil
+		}
+	}
+	return "", fmt.Errorf("SimConnect.dll not found")
+}
+
 func getFilePath() (string, error) {
-	sysPath := "\\MSFS SDK\\SimConnect SDK\\lib\\SimConnect.dll"
-	st, err := os.Stat(sysPath)
-	if err == nil && !st.IsDir() {
+	// sysPath := "\\MSFS SDK\\SimConnect SDK\\lib\\SimConnect.dll"
+	// st, err := os.Stat(sysPath)
+	// if err == nil && !st.IsDir() {
+	// 	return sysPath, nil
+	// }
+	sysPath, err := findSysPath()
+	if err == nil {
 		return sysPath, nil
 	}
+	fmt.Println("SimConnect.dll not found in default paths; using bundled")
 	exePath, err := os.Executable()
 	if err != nil {
 		return "", err
 	}
 	dllPath := filepath.Join(filepath.Dir(exePath), "SimConnect.dll")
-	st, err = os.Stat(dllPath)
+	st, err := os.Stat(dllPath)
 	if err == nil && !st.IsDir() {
 		return dllPath, nil
 	}
